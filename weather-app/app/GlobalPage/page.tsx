@@ -3,24 +3,8 @@ import { useState, useEffect } from 'react';
 import fetchWeather from '../fetchWeather';
 import WorldMapBg from '../components/world-map-bg';
 import Navbar from '../components/navbar';
-import { getWeatherEmoji } from '../utils/weatherEmoji';
-
-// Top 10 famous capital cities
-const FAMOUS_CITIES = [
-  { city: "New York", country: "USA", emoji: "🇺🇸" },
-  { city: "London", country: "UK", emoji: "🇬🇧" },
-  { city: "Tokyo", country: "Japan", emoji: "🇯🇵" },
-  { city: "Paris", country: "France", emoji: "🇫🇷" },
-  { city: "Sydney", country: "Australia", emoji: "🇦🇺" },
-  { city: "Dubai", country: "UAE", emoji: "🇦🇪" },
-  { city: "Moscow", country: "Russia", emoji: "🇷🇺" },
-  { city: "Singapore", country: "Singapore", emoji: "🇸🇬" },
-  { city: "Cairo", country: "Egypt", emoji: "🇪🇬" },
-  { city: "Rio de Janeiro", country: "Brazil", emoji: "🇧🇷" },
-];
-
-// Map weather condition to emoji
-
+import WeatherCard from '../components/weather-card';
+import { FAMOUS_CITIES } from '../utils/constants';
 
 interface CityWeather {
   city: string;
@@ -34,7 +18,7 @@ interface CityWeather {
   coord: { lat: number; lng: number };
 }
 
-const GlobalPage = () => {
+export default function GlobalPage() {
   const [weatherList, setWeatherList] = useState<CityWeather[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -47,24 +31,26 @@ const GlobalPage = () => {
         FAMOUS_CITIES.map(async ({ city, country, emoji }) => {
           try {
             const data = await fetchWeather(city);
-            results.push({
-              city: data.name,
-              country,
-              emoji,
-              temp: Math.round(data.main.temp),
-              description: data.weather[0].description,
-              weatherMain: data.weather[0].main,
-              humidity: data.main.humidity,
-              feelsLike: Math.round(data.main.feels_like),
-              coord: { lat: data.coord.lat, lng: data.coord.lon },
-            });
+            // Re-map the API response to fit what WeatherCard expects
+            // WeatherCard expects the raw OpenWeather API object shape
+            // So we just store the raw data but add our custom country/emoji
+            const fullData = {
+              ...data,
+              sys: { ...data.sys, country: `${country} ${emoji}` }
+            };
+            results.push(fullData as any);
           } catch (err) {
             console.error(`Failed to fetch weather for ${city}:`, err);
           }
         })
       );
 
-      setWeatherList(results);
+      // We maintain the original order of FAMOUS_CITIES
+      const sortedResults = FAMOUS_CITIES.map(c => 
+        results.find((r: any) => r.name.toLowerCase() === c.city.toLowerCase() || r.sys.country.includes(c.country))
+      ).filter(Boolean);
+
+      setWeatherList(sortedResults as any);
       setLoading(false);
     }
 
@@ -86,42 +72,11 @@ const GlobalPage = () => {
         </div>
       ) : (
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 w-[90%] max-w-6xl mx-auto mt-8'>
-          {weatherList.map((w) => (
-            <div
-              key={w.city}
-              className='
-                relative overflow-hidden rounded-2xl p-5
-                bg-white/10 dark:bg-white/5
-                backdrop-blur-md
-                border border-white/20 dark:border-white/10
-                hover:scale-[1.03] hover:shadow-lg
-                transition-all duration-300 cursor-default
-              '
-            >
-              {/* City header */}
-              <div className='flex items-center justify-between mb-3'>
-                <div>
-                  <h3 className='text-lg font-bold'>{w.emoji} {w.city}</h3>
-                  <p className='text-xs opacity-50'>{w.country}</p>
-                </div>
-                <span className='text-3xl'>{getWeatherEmoji(w.weatherMain)}</span>
-              </div>
-
-              {/* Temperature */}
-              <div className='text-4xl font-bold mb-1'>{w.temp}°C</div>
-              <p className='text-sm capitalize opacity-70 mb-3'>{w.description}</p>
-
-              {/* Details */}
-              <div className='flex gap-4 text-xs opacity-60'>
-                <span>Feels like <strong>{w.feelsLike}°C</strong></span>
-                <span>Humidity <strong>{w.humidity}%</strong></span>
-              </div>
-            </div>
+          {weatherList.map((weatherData: any, index) => (
+             <WeatherCard key={index} weather={weatherData} />
           ))}
         </div>
       )}
     </main>
-  )
+  );
 }
-
-export default GlobalPage
