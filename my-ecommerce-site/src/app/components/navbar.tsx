@@ -2,17 +2,31 @@ import Link from 'next/link';
 
 const Navbar = () => {
   return (
-    <nav className="flex items-center justify-between px-8 py-4 bg-white border-gray-100">
-      <Link href="/" className="text-2xl font-bold text-[#426B1F] font-newsreader ">World Peas</Link>
-      <div className="px-10">
-        <Link href="/product" className="text-gray-700 hover:text-[#426B1F] mx-4">Shop</Link>
-        <Link href="/" className="text-gray-700 hover:text-[#426B1F] mx-4">Newstand</Link>
-        <Link href="/" className="text-gray-700 hover:text-[#426B1F] mx-4">Who we are</Link>
-        <Link href="/" className="text-gray-700 hover:text-[#426B1F] mx-4 mr-10">My profile</Link>
-        <Link href="/cart" className="bg-[#426B1F] border border-[#E5E5E5] rounded-md text-white font-medium p-2 px-4 ">Basket</Link>
-      </div>
-    </nav>
-  )
-}
+    <header className="w-full bg-white">
+      <nav className="w-full max-w-[1280px] mx-auto px-6 md:px-12 py-6 flex items-center justify-between">
+        <Link href="/" className="text-[26px] font-normal text-[#426B1F] font-newsreader tracking-tight hover:opacity-90 transition-opacity">
+          World Peas
+        </Link>
+        <div className="flex items-center">
+          <Link href="/product" className="font-sans text-[13.5px] text-[#333333] hover:text-[#426B1F] transition-colors duration-200 mx-5">
+            Shop
+          </Link>
+          <Link href="/" className="font-sans text-[13.5px] text-[#333333] hover:text-[#426B1F] transition-colors duration-200 mx-5">
+            Newstand
+          </Link>
+          <Link href="/" className="font-sans text-[13.5px] text-[#333333] hover:text-[#426B1F] transition-colors duration-200 mx-5">
+            Who we are
+          </Link>
+          <Link href="/" className="font-sans text-[13.5px] text-[#333333] hover:text-[#426B1F] transition-colors duration-200 mx-5 mr-8">
+            My profile
+          </Link>
+          <Link href="/cart" className="font-sans text-[13.5px] font-medium bg-[#426B1F] hover:bg-[#355618] text-white px-5 py-2.5 rounded-[5px] transition-colors duration-200 shadow-xs">
+            Basket (3)
+          </Link>
+        </div>
+      </nav>
+    </header>
+  );
+};
 
 export default Navbar;
