@@ -46,16 +46,13 @@ export default function Home() {
           </div>
         </div>
 
-        {/* What We Believe Section */}
         <div className="w-full border-t border-[#E5E5E5] mt-28 pt-16 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16 text-left">
-          {/* Left Column */}
           <div className="md:col-span-3">
             <h2 className="font-sans text-[12.5px] font-bold tracking-widest text-[#111111] uppercase">
               What we believe
             </h2>
           </div>
-          
-          {/* Right Column */}
+      
           <div className="md:col-span-9 font-sans text-[16px] md:text-[17.5px] leading-[1.65] text-[#222222] font-normal flex flex-col gap-y-6 max-w-[800px]">
             <p>We believe in produce. Tasty produce. Produce like:</p>
             
